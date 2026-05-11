@@ -4,7 +4,16 @@ import litellm
 litellm.set_verbose = False
 from typing import Dict, List
 import time, traceback
-from crm_sandbox.agents.prompts import SCHEMA_STRING, REACT_RULE_STRING, SYSTEM_METADATA, REACT_EXTERNAL_INTERACTIVE_PROMPT, REACT_INTERNAL_INTERACTIVE_PROMPT, REACT_INTERNAL_PROMPT, REACT_EXTERNAL_PROMPT, REACT_PRIVACY_AWARE_EXTERNAL_PROMPT, REACT_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT, ACT_PROMPT
+from crm_sandbox.agents.prompts import SCHEMA_STRING, REACT_RULE_STRING, ACT_RULE_STRING, SYSTEM_METADATA, REACT_EXTERNAL_INTERACTIVE_PROMPT, REACT_INTERNAL_INTERACTIVE_PROMPT, REACT_INTERNAL_PROMPT, REACT_EXTERNAL_PROMPT, REACT_PRIVACY_AWARE_EXTERNAL_PROMPT, REACT_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT, ACT_PROMPT
+from crm_sandbox.agents.plan_and_solve_prompts import (
+    PAS_RULE_STRING,
+    PAS_INTERNAL_PROMPT,
+    PAS_EXTERNAL_PROMPT,
+    PAS_PRIVACY_AWARE_EXTERNAL_PROMPT,
+    PAS_INTERNAL_INTERACTIVE_PROMPT,
+    PAS_EXTERNAL_INTERACTIVE_PROMPT,
+    PAS_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT,
+)
 from crm_sandbox.agents.utils import parse_wrapped_response, BEDROCK_MODELS_MAP, TOGETHER_MODELS_MAP, VERTEX_MODELS_MAP
 import together
 
@@ -17,7 +26,7 @@ class ChatAgent:
         self, schema_obj, model: str = "gpt-4o", max_turns: int = 20, eval_mode="default", strategy="react", provider="bedrock", interactive=False, agent_type="internal", privacy_aware_prompt=False
     ):
         schema = self._build_schema(schema_obj)
-        assert strategy in ["react", "act"], "Only react and act strategies supported for now"
+        assert strategy in ["react", "act", "plan_and_solve"], "Only react, act, and plan_and_solve strategies supported for now"
         assert agent_type in ["internal", "external"], "Invalid agent type"
         
         if strategy == "react":
@@ -38,6 +47,24 @@ class ChatAgent:
                         self.sys_prompt = REACT_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance") # add strategy template and schema description
                     else:
                         self.sys_prompt = REACT_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance") # add strategy template and schema description
+        elif strategy == "plan_and_solve":
+            # Plan-and-Solve strategy
+            if not interactive:
+                if agent_type == "internal":
+                    self.sys_prompt = PAS_INTERNAL_PROMPT.format(system_description=schema, system="Salesforce instance")
+                else:
+                    if privacy_aware_prompt:
+                        self.sys_prompt = PAS_PRIVACY_AWARE_EXTERNAL_PROMPT.format(system_description=schema, system="Salesforce instance")
+                    else:
+                        self.sys_prompt = PAS_EXTERNAL_PROMPT.format(system_description=schema, system="Salesforce instance")
+            else:
+                if agent_type == "internal":
+                    self.sys_prompt = PAS_INTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
+                else:
+                    if privacy_aware_prompt:
+                        self.sys_prompt = PAS_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
+                    else:
+                        self.sys_prompt = PAS_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
         else:
             # act strategy
             self.sys_prompt = ACT_PROMPT.format(system_description=schema, system="Salesforce instance")
@@ -160,6 +187,8 @@ class ChatAgent:
                 info["end_reason"] = self.info["end_reason"]
                 if self.strategy == "react":
                     self.messages.append({"role": "user", "content": REACT_RULE_STRING})
+                elif self.strategy == "plan_and_solve":
+                    self.messages.append({"role": "user", "content": PAS_RULE_STRING})
                 elif self.strategy == "act":
                     self.messages.append({"role": "user", "content": ACT_RULE_STRING})
                 continue

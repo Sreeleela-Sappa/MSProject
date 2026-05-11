@@ -47,17 +47,17 @@ def run():
     print(f"Starting evaluation at {start_time}")
     selected_tasks = {t['idx']: t for t in selected_tasks}
     
-    if args.agent_strategy in ["act", "react"]:
+    if args.agent_strategy in ["act", "react", "plan_and_solve"]:
         if args.interactive:
             if args.agent_strategy == "act":
                 raise ValueError(
-                    "Interactive mode is only supported for the 'react' strategy. "
+                    "Interactive mode is only supported for the 'react' and 'plan_and_solve' strategies. "
                     "'act' strategy cannot be used with --interactive."
                 )
-            # This implies agent_strategy is "react" if interactive is True
+            # This implies agent_strategy is "react" or "plan_and_solve" if interactive is True
             
             env = InteractiveChatEnv(tasks=selected_tasks, max_user_turns=args.max_user_turns, org_type=args.org_type)
-        else: # Not interactive, both 'act' and 'react' are fine
+        else: # Not interactive, 'act', 'react', and 'plan_and_solve' are fine
             env = ChatEnv(tasks=selected_tasks, org_type=args.org_type)
     elif args.agent_strategy == "tool_call":
         if args.interactive:
@@ -93,7 +93,7 @@ def run():
             agent_type = "external"
         else:
             agent_type = "internal"
-        if args.agent_strategy in ["react"]:
+        if args.agent_strategy in ["react", "plan_and_solve"]:
             agent = ChatAgent(
                 model=args.model,
                 schema_obj=SCHEMA,
@@ -172,7 +172,7 @@ if __name__ == "__main__":
         "--agent_strategy",
         type=str,
         default="react",
-        choices=["tool_call", "act", "react", "tool_call_flex"],
+        choices=["tool_call", "act", "react", "tool_call_flex", "plan_and_solve"],
     )
     parser.add_argument(
         "--agent_eval_mode",

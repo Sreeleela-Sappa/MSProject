@@ -59,7 +59,8 @@ class ChatAgent:
             self.model = TOGETHER_MODELS_MAP[self.model]["name"]
         elif "vertex" in provider and self.model in VERTEX_MODELS_MAP:
             self.model = VERTEX_MODELS_MAP[self.model]["name"]
-            
+        elif provider == "local":
+            self.model = f"openai/{self.model}"
         else:
             pass
         if self.model in ["o1-mini", "o1-preview", "o1-2024-12-17", "o3-mini-2025-01-31"]:

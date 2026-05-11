@@ -184,7 +184,13 @@ if __name__ == "__main__":
         "--llm_provider",
         type=str,
         default="bedrock",
-        choices=["bedrock", "together_ai", "openai", "vertex_ai"]
+        choices=["bedrock", "together_ai", "openai", "vertex_ai", "local"]
+    )
+    parser.add_argument(
+        "--local_api_base",
+        type=str,
+        default="http://localhost:8000/v1",
+        help="The API base URL for the local LLM server (e.g. llama.cpp server)"
     )
     parser.add_argument(
         "--task_category",
@@ -237,6 +243,9 @@ if __name__ == "__main__":
     parser.add_argument("--log_dir", type=str, default="logs")
     args = parser.parse_args()
     print(args)
+    if args.llm_provider == "local":
+        os.environ["OPENAI_API_KEY"] = "sk-no-key-required"
+        os.environ["OPENAI_API_BASE"] = args.local_api_base
 
     run()
     

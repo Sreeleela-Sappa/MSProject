@@ -5,8 +5,8 @@ class LLMUserSimulationEnv(object):
     def __init__(self, model: str, provider: str) -> None:
         super().__init__()
         self.messages: List[Dict[str, Any]] = []
-        self.model = model
-        self.provider = provider
+        self.model = model if provider != "local" else f"openai/{model}"
+        self.provider = provider if provider != "local" else "openai"
         self.total_cost = 0.0
         self.reset()
 

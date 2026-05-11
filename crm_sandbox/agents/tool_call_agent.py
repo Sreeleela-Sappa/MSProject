@@ -56,9 +56,10 @@ class ToolCallAgent:
             self.model = TOGETHER_MODELS_MAP[self.model]["name"]
         elif "vertex" in provider and self.model in VERTEX_MODELS_MAP:
             self.model = VERTEX_MODELS_MAP[self.model]["name"]
+        elif provider == "local":
+            self.model = f"openai/{self.model}"
         else:
             assert self.model in ["o1-mini", "o1-2024-12-17", "o1-preview", "gpt-4o-2024-08-06", "gpt-3.5-turbo-0125"], "Invalid model name"
-            
 
     def _build_schema(self, schema_obj):
         object_description = dict()

@@ -1,5 +1,7 @@
 # custom
 *logs*
+*.gguf
+.cache/
 crm_sandbox/tc_natural_1002/*
 read.py
 run_tasks_conc.py

@@ -10,6 +10,16 @@ import argparse
 from datetime import datetime
 import time
 
+# Task-specific hints injected automatically based on --task_category
+TASK_HINTS = {
+    "knowledge_qa": (
+        "For questions about product features, policies, warranties, payment plans, "
+        "financing, terms, or any company knowledge/FAQ, always query the `Knowledge__kav` "
+        "object which stores all knowledge base articles. "
+        "Example: SELECT Id, Title, Answer__c FROM Knowledge__kav WHERE PublishStatus = 'Online' LIMIT 50"
+    ),
+}
+
 def run():
     if not os.path.exists(args.log_dir):
         os.makedirs(args.log_dir)
@@ -103,7 +113,8 @@ def run():
                 provider=args.llm_provider,
                 interactive=args.interactive,
                 agent_type=agent_type,
-                privacy_aware_prompt=args.privacy_aware_prompt
+                privacy_aware_prompt=args.privacy_aware_prompt,
+                system_hint=TASK_HINTS.get(args.task_category, "")
             )
         else:
             

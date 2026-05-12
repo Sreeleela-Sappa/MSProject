@@ -84,13 +84,6 @@ Output (Turn 3):
 <thought> The average handle time is 42.5 minutes. Plan complete. </thought>
 <respond> 42.5 minutes </respond>
 
-# SOQL/SOSL Critical Rules (must follow exactly)
-- Long Text Area fields like `Description` CANNOT be used in WHERE clause filters. Use SOSL instead: `FIND {{keyword}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description)`
-- Single quotes inside string literals must be escaped with a backslash: `WHERE Name = 'O\'Reilly Auto Parts'`
-- The `Case` object does NOT have a `Product2Id` field. To find cases by product, use SOSL search or find via related objects using the schema below.
-- Always verify field names exactly against the schema before writing queries. Never guess field names.
-- SOSL syntax for text search: `FIND {{search term}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description, Status)`
-
 # {system} description
 {system_description}
 """
@@ -151,13 +144,6 @@ Output (Turn 2):
 <thought> The count is 100. Plan complete. </thought>
 <respond> 100 </respond>
 
-# SOQL/SOSL Critical Rules (must follow exactly)
-- Long Text Area fields like `Description` CANNOT be used in WHERE clause filters. Use SOSL instead: `FIND {{keyword}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description)`
-- Single quotes inside string literals must be escaped with a backslash: `WHERE Name = 'O\'Reilly Auto Parts'`
-- The `Case` object does NOT have a `Product2Id` field. To find cases by product, use SOSL search or find via related objects using the schema below.
-- Always verify field names exactly against the schema before writing queries. Never guess field names.
-- SOSL syntax for text search: `FIND {{search term}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description, Status)`
-
 # {system} description
 {system_description}
 """
@@ -211,13 +197,6 @@ Step 1: [describe what you need to find first]
 - When you are confident about the answer, submit it with <respond>.
 - Always end with a <respond> action containing ONLY the answer, NO full sentences or any explanation.
 
-# SOQL/SOSL Critical Rules (must follow exactly)
-- Long Text Area fields like `Description` CANNOT be used in WHERE clause filters. Use SOSL instead: `FIND {{keyword}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description)`
-- Single quotes inside string literals must be escaped with a backslash: `WHERE Name = 'O\'Reilly Auto Parts'`
-- The `Case` object does NOT have a `Product2Id` field. To find cases by product, use SOSL search or find via related objects using the schema below.
-- Always verify field names exactly against the schema before writing queries. Never guess field names.
-- SOSL syntax for text search: `FIND {{search term}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description, Status)`
-
 # {system} description
 {system_description}
 """
@@ -269,13 +248,6 @@ Step 3: [describe how to combine/compute the answer]
 - If a step's result changes your plan, briefly note the adjustment in your thought.
 - When you are confident about the answer, use respond to provide it.
 
-# SOQL/SOSL Critical Rules (must follow exactly)
-- Long Text Area fields like `Description` CANNOT be used in WHERE clause filters. Use SOSL instead: `FIND {{keyword}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description)`
-- Single quotes inside string literals must be escaped with a backslash: `WHERE Name = 'O\'Reilly Auto Parts'`
-- The `Case` object does NOT have a `Product2Id` field. To find cases by product, use SOSL search or find via related objects using the schema below.
-- Always verify field names exactly against the schema before writing queries. Never guess field names.
-- SOSL syntax for text search: `FIND {{search term}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description, Status)`
-
 # {system} description
 {system_description}
 """
@@ -326,13 +298,6 @@ Step 3: [describe how to combine/compute the answer]
 - Track which step of the plan you are executing.
 - If a step's result changes your plan, briefly note the adjustment in your thought.
 - When you are confident about the answer, use respond to provide it.
-
-# SOQL/SOSL Critical Rules (must follow exactly)
-- Long Text Area fields like `Description` CANNOT be used in WHERE clause filters. Use SOSL instead: `FIND {{keyword}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description)`
-- Single quotes inside string literals must be escaped with a backslash: `WHERE Name = 'O\'Reilly Auto Parts'`
-- The `Case` object does NOT have a `Product2Id` field. To find cases by product, use SOSL search or find via related objects using the schema below.
-- Always verify field names exactly against the schema before writing queries. Never guess field names.
-- SOSL syntax for text search: `FIND {{search term}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description, Status)`
 
 # {system} description
 {system_description}
@@ -391,13 +356,6 @@ Step 1: [describe what you need to find first]
 - Track which step of the plan you are executing.
 - If a step's result changes your plan, briefly note the adjustment in your thought.
 - When you are confident about the answer, use respond to provide it.
-
-# SOQL/SOSL Critical Rules (must follow exactly)
-- Long Text Area fields like `Description` CANNOT be used in WHERE clause filters. Use SOSL instead: `FIND {{keyword}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description)`
-- Single quotes inside string literals must be escaped with a backslash: `WHERE Name = 'O\'Reilly Auto Parts'`
-- The `Case` object does NOT have a `Product2Id` field. To find cases by product, use SOSL search or find via related objects using the schema below.
-- Always verify field names exactly against the schema before writing queries. Never guess field names.
-- SOSL syntax for text search: `FIND {{search term}} IN ALL FIELDS RETURNING Case(Id, OwnerId, Description, Status)`
 
 # {system} description
 {system_description}

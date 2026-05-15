@@ -14,6 +14,15 @@ from crm_sandbox.agents.plan_and_solve_prompts import (
     PAS_EXTERNAL_INTERACTIVE_PROMPT,
     PAS_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT,
 )
+from crm_sandbox.agents.reflexion_prompts import (
+    REFLEXION_RULE_STRING,
+    REFLEXION_INTERNAL_PROMPT,
+    REFLEXION_EXTERNAL_PROMPT,
+    REFLEXION_PRIVACY_AWARE_EXTERNAL_PROMPT,
+    REFLEXION_INTERNAL_INTERACTIVE_PROMPT,
+    REFLEXION_EXTERNAL_INTERACTIVE_PROMPT,
+    REFLEXION_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT,
+)
 from crm_sandbox.agents.utils import parse_wrapped_response, BEDROCK_MODELS_MAP, TOGETHER_MODELS_MAP, VERTEX_MODELS_MAP
 import together
 
@@ -26,7 +35,7 @@ class ChatAgent:
         self, schema_obj, model: str = "gpt-4o", max_turns: int = 20, eval_mode="default", strategy="react", provider="bedrock", interactive=False, agent_type="internal", privacy_aware_prompt=False
     ):
         schema = self._build_schema(schema_obj)
-        assert strategy in ["react", "act", "plan_and_solve"], "Only react, act, and plan_and_solve strategies supported for now"
+        assert strategy in ["react", "act", "plan_and_solve", "reflexion"], "Only react, act, plan_and_solve, and reflexion strategies supported for now"
         assert agent_type in ["internal", "external"], "Invalid agent type"
         
         if strategy == "react":
@@ -65,6 +74,24 @@ class ChatAgent:
                         self.sys_prompt = PAS_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
                     else:
                         self.sys_prompt = PAS_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
+        elif strategy == "reflexion":
+            # Reflexion strategy
+            if not interactive:
+                if agent_type == "internal":
+                    self.sys_prompt = REFLEXION_INTERNAL_PROMPT.format(system_description=schema, system="Salesforce instance")
+                else:
+                    if privacy_aware_prompt:
+                        self.sys_prompt = REFLEXION_PRIVACY_AWARE_EXTERNAL_PROMPT.format(system_description=schema, system="Salesforce instance")
+                    else:
+                        self.sys_prompt = REFLEXION_EXTERNAL_PROMPT.format(system_description=schema, system="Salesforce instance")
+            else:
+                if agent_type == "internal":
+                    self.sys_prompt = REFLEXION_INTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
+                else:
+                    if privacy_aware_prompt:
+                        self.sys_prompt = REFLEXION_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
+                    else:
+                        self.sys_prompt = REFLEXION_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
         else:
             # act strategy
             self.sys_prompt = ACT_PROMPT.format(system_description=schema, system="Salesforce instance")
@@ -189,6 +216,8 @@ class ChatAgent:
                     self.messages.append({"role": "user", "content": REACT_RULE_STRING})
                 elif self.strategy == "plan_and_solve":
                     self.messages.append({"role": "user", "content": PAS_RULE_STRING})
+                elif self.strategy == "reflexion":
+                    self.messages.append({"role": "user", "content": REFLEXION_RULE_STRING})
                 elif self.strategy == "act":
                     self.messages.append({"role": "user", "content": ACT_RULE_STRING})
                 continue

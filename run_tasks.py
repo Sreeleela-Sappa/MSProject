@@ -57,11 +57,11 @@ def run():
     print(f"Starting evaluation at {start_time}")
     selected_tasks = {t['idx']: t for t in selected_tasks}
     
-    if args.agent_strategy in ["act", "react", "plan_and_solve"]:
+    if args.agent_strategy in ["act", "react", "plan_and_solve", "reflexion"]:
         if args.interactive:
             if args.agent_strategy == "act":
                 raise ValueError(
-                    "Interactive mode is only supported for the 'react' and 'plan_and_solve' strategies. "
+                    "Interactive mode is only supported for the 'react', 'plan_and_solve', and 'reflexion' strategies. "
                     "'act' strategy cannot be used with --interactive."
                 )
             # This implies agent_strategy is "react" or "plan_and_solve" if interactive is True
@@ -103,7 +103,7 @@ def run():
             agent_type = "external"
         else:
             agent_type = "internal"
-        if args.agent_strategy in ["react", "plan_and_solve"]:
+        if args.agent_strategy in ["react", "plan_and_solve", "reflexion"]:
             agent = ChatAgent(
                 model=args.model,
                 schema_obj=SCHEMA,
@@ -183,7 +183,7 @@ if __name__ == "__main__":
         "--agent_strategy",
         type=str,
         default="react",
-        choices=["tool_call", "act", "react", "tool_call_flex", "plan_and_solve"],
+        choices=["tool_call", "act", "react", "tool_call_flex", "plan_and_solve", "reflexion"],
     )
     parser.add_argument(
         "--agent_eval_mode",

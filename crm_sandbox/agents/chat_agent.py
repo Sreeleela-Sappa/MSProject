@@ -23,6 +23,7 @@ from crm_sandbox.agents.reflexion_prompts import (
     REFLEXION_EXTERNAL_INTERACTIVE_PROMPT,
     REFLEXION_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT,
 )
+from crm_sandbox.agents.soql_reference import SOQL_REFERENCE
 from crm_sandbox.agents.utils import parse_wrapped_response, BEDROCK_MODELS_MAP, TOGETHER_MODELS_MAP, VERTEX_MODELS_MAP
 import together
 
@@ -136,6 +137,8 @@ class ChatAgent:
                 [f"{obj}\n{fields}" for obj, fields in object_description.items()]
             )
         )
+        # Append shared SOQL reference guide (same for all strategies)
+        template += "\n" + SOQL_REFERENCE
         return template
     
     def reset(self, args):

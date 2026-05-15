@@ -51,6 +51,10 @@ FIND {search term} IN ALL FIELDS RETURNING Case(Id, OwnerId, IssueId__c, Subject
 - Relationship fields use dot notation: Account.Name, Owner.Name, Contact.Email
 - For User lookups: query User object separately, then use Id in WHERE clause
 - CaseHistory__c tracks ownership changes: Field__c = 'Owner Assignment', NewValue__c = User Id
+- CANNOT use column aliases in ORDER BY — use the aggregate expression directly
+  WRONG: SELECT OwnerId, COUNT(Id) cnt FROM Case GROUP BY OwnerId ORDER BY cnt DESC
+  CORRECT: SELECT OwnerId, COUNT(Id) FROM Case GROUP BY OwnerId ORDER BY COUNT(Id) DESC
+- SOSL search terms cannot contain hyphens — remove or replace them with spaces
 
 ## Key Object Relationships
 - Case.OwnerId -> User.Id (current case owner)

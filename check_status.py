@@ -1,16 +1,34 @@
 #!/usr/bin/env python3
 """
 Quick status checker for CRMArena benchmark runs.
-Usage: python check_status.py
+Usage: 
+  python check_status.py                          # show all
+  python check_status.py react                    # filter by strategy
+  python check_status.py react case_routing       # filter by strategy + task
+  python check_status.py "" knowledge_qa          # filter by task only
 """
-import json, os, glob
+import json, os, glob, sys
 
 LOG_DIR = "logs"
 TOTAL = 100
 
+# Parse optional filters
+strategy_filter = sys.argv[1] if len(sys.argv) > 1 else ""
+task_filter = sys.argv[2] if len(sys.argv) > 2 else ""
+
 files = sorted(glob.glob(f"{LOG_DIR}/results_*.json"))
 if not files:
     print("No result files found in logs/ directory.")
+    exit()
+
+# Apply filters
+if strategy_filter:
+    files = [f for f in files if f"_{strategy_filter}_" in f]
+if task_filter:
+    files = [f for f in files if f"_{task_filter}" in f]
+
+if not files:
+    print(f"No results matching strategy='{strategy_filter}' task='{task_filter}'")
     exit()
 
 print("=" * 65)
@@ -38,8 +56,10 @@ for f in files:
         else:
             acc = f"{100*passed/done:.1f}%" if done > 0 else "N/A"
         name = os.path.basename(f).replace("results_", "").replace(".json", "")
-        if len(name) > 44:
-            name = name[:41] + "..."
+        # Shorten model name prefix for readability
+        name = name.replace("Qwen2.5-Coder-32B-Instruct-Q4_K_M.gguf_", "Coder32B_")
+        name = name.replace("Qwen2.5-32B-Instruct-Q4_K_M.gguf_", "Qwen32B_")
+        name = name.replace("Meta-Llama-3.1-70B-Instruct-Q4_K_S.gguf_", "Llama70B_")
         print(f"{name:<45} {done:>5}/{TOTAL} {passed:>5} {acc:>25}")
     except Exception as e:
         print(f"{os.path.basename(f)}: ERROR - {e}")

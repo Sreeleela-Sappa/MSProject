@@ -235,12 +235,7 @@ class ChatAgent:
             if done:
                 break
             elif action["name"] == "execute": # execution results from
-                obs_str = str(obs)
-                # Truncate long observations to prevent context window overflow
-                # (knowledge_qa articles can be 50K+ tokens)
-                if len(obs_str) > 10000:
-                    obs_str = obs_str[:10000] + "\n... [TRUNCATED - showing first 10000 chars]"
-                self.messages.append({"role": "user", "content": f"Salesforce instance output: {obs_str}"})
+                self.messages.append({"role": "user", "content": f"Salesforce instance output: {obs}"})
             elif action["name"] == "respond": # respond to simulated user
                 self.messages.append({"role": "user", "content": obs})
         

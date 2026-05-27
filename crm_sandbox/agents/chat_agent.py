@@ -46,6 +46,15 @@ from crm_sandbox.agents.tree_of_thought_prompts import (
     TOT_EVALUATOR_PROMPT,
     TOT_NUM_CANDIDATES,
 )
+from crm_sandbox.agents.step_back_prompts import (
+    STEP_BACK_RULE_STRING,
+    STEP_BACK_INTERNAL_PROMPT,
+    STEP_BACK_EXTERNAL_PROMPT,
+    STEP_BACK_PRIVACY_AWARE_EXTERNAL_PROMPT,
+    STEP_BACK_INTERNAL_INTERACTIVE_PROMPT,
+    STEP_BACK_EXTERNAL_INTERACTIVE_PROMPT,
+    STEP_BACK_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT,
+)
 from crm_sandbox.agents.soql_reference import SOQL_REFERENCE
 from crm_sandbox.agents.utils import parse_wrapped_response, BEDROCK_MODELS_MAP, TOGETHER_MODELS_MAP, VERTEX_MODELS_MAP
 import together
@@ -58,7 +67,7 @@ class ChatAgent:
         self, schema_obj, model: str = "gpt-4o", max_turns: int = 20, eval_mode="default", strategy="react", provider="bedrock", interactive=False, agent_type="internal", privacy_aware_prompt=False
     ):
         schema = self._build_schema(schema_obj)
-        assert strategy in ["react", "act", "plan_and_solve", "reflexion", "self_consistency", "tree_of_thought"], "Only react, act, plan_and_solve, reflexion, self_consistency, and tree_of_thought strategies supported"
+        assert strategy in ["react", "act", "plan_and_solve", "reflexion", "self_consistency", "tree_of_thought", "step_back"], "Only react, act, plan_and_solve, reflexion, self_consistency, tree_of_thought, and step_back strategies supported"
         assert agent_type in ["internal", "external"], "Invalid agent type"
         
         if strategy == "react":
@@ -151,6 +160,24 @@ class ChatAgent:
                         self.sys_prompt = TOT_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
                     else:
                         self.sys_prompt = TOT_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
+        elif strategy == "step_back":
+            # Step-Back strategy
+            if not interactive:
+                if agent_type == "internal":
+                    self.sys_prompt = STEP_BACK_INTERNAL_PROMPT.format(system_description=schema, system="Salesforce instance")
+                else:
+                    if privacy_aware_prompt:
+                        self.sys_prompt = STEP_BACK_PRIVACY_AWARE_EXTERNAL_PROMPT.format(system_description=schema, system="Salesforce instance")
+                    else:
+                        self.sys_prompt = STEP_BACK_EXTERNAL_PROMPT.format(system_description=schema, system="Salesforce instance")
+            else:
+                if agent_type == "internal":
+                    self.sys_prompt = STEP_BACK_INTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
+                else:
+                    if privacy_aware_prompt:
+                        self.sys_prompt = STEP_BACK_PRIVACY_AWARE_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
+                    else:
+                        self.sys_prompt = STEP_BACK_EXTERNAL_INTERACTIVE_PROMPT.format(system_description=schema, system="Salesforce instance")
         else:
             # act strategy
             self.sys_prompt = ACT_PROMPT.format(system_description=schema, system="Salesforce instance")
@@ -291,6 +318,8 @@ class ChatAgent:
                     self.messages.append({"role": "user", "content": SC_RULE_STRING})
                 elif self.strategy == "tree_of_thought":
                     self.messages.append({"role": "user", "content": TOT_RULE_STRING})
+                elif self.strategy == "step_back":
+                    self.messages.append({"role": "user", "content": STEP_BACK_RULE_STRING})
                 elif self.strategy == "act":
                     self.messages.append({"role": "user", "content": ACT_RULE_STRING})
                 continue

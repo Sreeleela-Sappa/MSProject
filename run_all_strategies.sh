@@ -16,7 +16,7 @@ STRATEGIES=(
     "plan_and_solve"
     "reflexion"
     "self_consistency"
-    "tree_of_thought"
+    "step_back"
 )
 
 TASKS=(
